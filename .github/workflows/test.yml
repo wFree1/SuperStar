@@ -1,0 +1,40 @@
+name: 刷课
+
+on: 
+  push:
+    branches: [ main ]
+
+  schedule:
+    - cron: "0 8 * * *"  # 每天8点触发
+    - cron: "0 12 * * *" # 每天12点触发
+    
+jobs: 
+  Start:
+    runs-on: ubuntu-latest # 在最新版本的 Ubuntu 操作系统环境下运行
+    steps: # 要执行的步骤
+      - name: 拷贝代码
+        uses: actions/checkout@v3  # 用于将github代码仓库的代码拷贝到工作目录中
+
+      - name: 设置python环境
+        uses: actions/setup-python@v2 # 用于设置 Python 环境，它允许你指定要在工作环境中使用的 Python 版本
+        with:
+          python-version: '3.9'  # 选择要用的Python版本
+
+      - name: 安装依赖包
+        run: |
+          pip install -r ./requirements.txt
+          
+      - name: 判断时间并执行刷课或关闭
+        run: |
+          CURRENT_HOUR=$(date +%H)
+          if [ $CURRENT_HOUR -eq 8 ]; then
+            echo "开始刷课..."
+            # 这里放置你的刷课脚本
+            python main.py -u 16681300161 -p wloves181211... -l 249847467
+          elif [ $CURRENT_HOUR -eq 12 ]; then
+            echo "关闭刷课..."
+            # 这里放置你的关闭刷课脚本
+            # 关闭脚本的命令可以放在这里
+          else
+            echo "不在刷课或关闭时间，跳过..."
+          fi
